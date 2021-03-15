@@ -10,6 +10,7 @@
 //
 //******************************************************************************
 
+import edu.rit.pj2.Loop;
 import edu.rit.pj2.Task;
 import java.util.*;
 
@@ -58,25 +59,34 @@ public class FriendlySmp extends Task {
         }
 
         // ********************************************** Parallelize **********************************************
-        
+
         Map<String, int[]> friendlyList = new LinkedHashMap<>();
-        for(Map.Entry<int[], int[]> pair : abundancesList.entrySet()) {
-            if(friendlyList.containsKey(Arrays.toString(pair.getKey()))) {
-                friendlyList.put(Arrays.toString(pair.getKey()), concatArrays(friendlyList.get(Arrays.toString(pair.getKey())), pair.getValue()));
-            } else {
-                friendlyList.put(Arrays.toString(pair.getKey()), pair.getValue());
+
+        ArrayList<int[]> keyList = new ArrayList<>(abundancesList.keySet());
+        ArrayList<int[]> valueList = new ArrayList<>(abundancesList.values());
+
+        parallelFor(0, abundancesList.size() - 1).exec(new Loop(){
+
+            @Override
+            public void run(int i) throws Exception {
+
+                if(friendlyList.containsKey(Arrays.toString(keyList.get(i)))) {
+                    friendlyList.put(Arrays.toString(keyList.get(i)), concatArrays(friendlyList.get(Arrays.toString(keyList.get(i))), valueList.get(i)));
+                } else {
+                    friendlyList.put(Arrays.toString(keyList.get(i)), valueList.get(i));
+                }
             }
-        }
+        });
 
         ArrayList<Map.Entry<String, int[]>> greatest = new ArrayList<>();
         int count = countFriendlyNums(friendlyList);
         int most = 0;
 
-        for(Map.Entry<String, int[]> pair : friendlyList.entrySet()) {
-            if(pair.getValue().length > most) {
-                most = pair.getValue().length;
-            }
+                for(Map.Entry<String, int[]> pair : friendlyList.entrySet()) {
+        if(pair.getValue().length > most) {
+            most = pair.getValue().length;
         }
+    }
 
         // ********************************************** Parallelize **********************************************
 

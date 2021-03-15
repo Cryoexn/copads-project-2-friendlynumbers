@@ -1,7 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="BranchesTreeState">
+    <expand>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+    </expand>
+    <select />
+  </component>
   <component name="ChangeListManager">
-    <list default="true" id="f4fb6f5a-c88c-4599-a159-a9090c6fc180" name="Default Changelist" comment="" />
+    <list default="true" id="f4fb6f5a-c88c-4599-a159-a9090c6fc180" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/pj2_20190611.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/pj2.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FriendlyNums.iml" beforeDir="false" afterPath="$PROJECT_DIR$/FriendlyNums.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/FriendlyNums/FriendlySeq.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/FriendlyNums/FriendlySeq.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/FriendlyNums/FriendlySmp.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/FriendlyNums/FriendlySmp.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/FriendlySmp.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/FriendlySmp.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -14,6 +42,9 @@
       </list>
     </option>
   </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
   <component name="ProjectId" id="1pcqbXltyL9F6ecZiQt02QKO3Ap" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -22,7 +53,8 @@
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/src" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="last_opened_file_path" value="$USER_HOME$/Downloads/pj2_20190611.jar" />
     <property name="project.structure.last.edited" value="Libraries" />
     <property name="project.structure.proportion" value="0.0" />
     <property name="project.structure.side.proportion" value="0.0" />
@@ -33,8 +65,8 @@
       <recent name="C:\Users\David\Documents\Java-Projects\FriendlyNums\src" />
     </key>
   </component>
-  <component name="RunManager">
-    <configuration name="pj2" type="Application" factoryName="Application" nameIsGenerated="true">
+  <component name="RunManager" selected="Application.smp">
+    <configuration name="seq" type="Application" factoryName="Application">
       <option name="MAIN_CLASS_NAME" value="pj2" />
       <module name="FriendlyNums" />
       <option name="PROGRAM_PARAMETERS" value="debug=makespan tracker=none FriendlySeq 6000 1200000" />
@@ -42,7 +74,20 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="smp" type="Application" factoryName="Application">
+      <option name="MAIN_CLASS_NAME" value="pj2" />
+      <module name="FriendlyNums" />
+      <option name="PROGRAM_PARAMETERS" value="debug=makespan tracker=none FriendlySmp 6000 1200000" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <list>
+      <item itemvalue="Application.seq" />
+      <item itemvalue="Application.smp" />
+    </list>
   </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="project-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
       <changelist id="f4fb6f5a-c88c-4599-a159-a9090c6fc180" name="Default Changelist" comment="" />
@@ -53,38 +98,56 @@
     </task>
     <servers />
   </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
   <component name="WindowStateProjectService">
-    <state x="2334" y="179" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1615568226957">
-      <screen x="1920" y="0" width="1920" height="1050" />
+    <state x="414" y="207" width="1084" height="734" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1615780745475">
+      <screen x="0" y="27" width="1920" height="1053" />
     </state>
+    <state x="414" y="207" width="1084" height="734" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.27.1920.1053@0.27.1920.1053" timestamp="1615780745475" />
     <state x="414" y="179" key="#com.intellij.execution.impl.EditConfigurationsDialog/1920.0.1920.1050/0.0.1920.1050@0.0.1920.1050" timestamp="1615517606640" />
     <state x="2334" y="179" key="#com.intellij.execution.impl.EditConfigurationsDialog/1920.0.1920.1050/0.0.1920.1050@1920.0.1920.1050" timestamp="1615568226957" />
-    <state x="765" y="228" key="#com.intellij.ide.util.MemberChooser" timestamp="1615493002936">
-      <screen x="0" y="0" width="1920" height="1050" />
+    <state x="765" y="256" width="374" height="590" key="#com.intellij.ide.util.MemberChooser" timestamp="1615779624340">
+      <screen x="0" y="27" width="1920" height="1053" />
     </state>
+    <state x="765" y="256" width="374" height="590" key="#com.intellij.ide.util.MemberChooser/0.27.1920.1053@0.27.1920.1053" timestamp="1615779624340" />
     <state x="765" y="228" key="#com.intellij.ide.util.MemberChooser/1920.0.1920.1050/0.0.1920.1050@0.0.1920.1050" timestamp="1615493002936" />
-    <state x="666" y="266" key="FileChooserDialogImpl" timestamp="1615492907775">
-      <screen x="0" y="0" width="1920" height="1050" />
+    <state x="666" y="294" width="652" height="519" key="FileChooserDialogImpl" timestamp="1615778864506">
+      <screen x="0" y="27" width="1920" height="1053" />
     </state>
+    <state x="666" y="294" width="652" height="519" key="FileChooserDialogImpl/0.27.1920.1053@0.27.1920.1053" timestamp="1615778864506" />
     <state x="666" y="266" key="FileChooserDialogImpl/1920.0.1920.1050/0.0.1920.1050@0.0.1920.1050" timestamp="1615492907775" />
-    <state width="1877" height="541" key="GridCell.Tab.0.bottom" timestamp="1615586579780">
-      <screen x="1920" y="0" width="1920" height="1050" />
+    <state width="1878" height="266" key="GridCell.Tab.0.bottom" timestamp="1615780889594">
+      <screen x="0" y="27" width="1920" height="1053" />
     </state>
+    <state width="1878" height="266" key="GridCell.Tab.0.bottom/0.27.1920.1053@0.27.1920.1053" timestamp="1615780889594" />
     <state width="619" height="316" key="GridCell.Tab.0.bottom/1920.0.1920.1050/0.0.1920.1050@0.0.1920.1050" timestamp="1615523193350" />
     <state width="1877" height="541" key="GridCell.Tab.0.bottom/1920.0.1920.1050/0.0.1920.1050@1920.0.1920.1050" timestamp="1615586579780" />
-    <state width="1877" height="541" key="GridCell.Tab.0.center" timestamp="1615586579780">
-      <screen x="1920" y="0" width="1920" height="1050" />
+    <state width="1878" height="266" key="GridCell.Tab.0.center" timestamp="1615780889593">
+      <screen x="0" y="27" width="1920" height="1053" />
     </state>
+    <state width="1878" height="266" key="GridCell.Tab.0.center/0.27.1920.1053@0.27.1920.1053" timestamp="1615780889593" />
     <state width="619" height="316" key="GridCell.Tab.0.center/1920.0.1920.1050/0.0.1920.1050@0.0.1920.1050" timestamp="1615523193350" />
     <state width="1877" height="541" key="GridCell.Tab.0.center/1920.0.1920.1050/0.0.1920.1050@1920.0.1920.1050" timestamp="1615586579780" />
-    <state width="1877" height="541" key="GridCell.Tab.0.left" timestamp="1615586579780">
-      <screen x="1920" y="0" width="1920" height="1050" />
+    <state width="1878" height="266" key="GridCell.Tab.0.left" timestamp="1615780889593">
+      <screen x="0" y="27" width="1920" height="1053" />
     </state>
+    <state width="1878" height="266" key="GridCell.Tab.0.left/0.27.1920.1053@0.27.1920.1053" timestamp="1615780889593" />
     <state width="619" height="316" key="GridCell.Tab.0.left/1920.0.1920.1050/0.0.1920.1050@0.0.1920.1050" timestamp="1615523193350" />
     <state width="1877" height="541" key="GridCell.Tab.0.left/1920.0.1920.1050/0.0.1920.1050@1920.0.1920.1050" timestamp="1615586579780" />
-    <state width="1877" height="541" key="GridCell.Tab.0.right" timestamp="1615586579780">
-      <screen x="1920" y="0" width="1920" height="1050" />
+    <state width="1878" height="266" key="GridCell.Tab.0.right" timestamp="1615780889593">
+      <screen x="0" y="27" width="1920" height="1053" />
     </state>
+    <state width="1878" height="266" key="GridCell.Tab.0.right/0.27.1920.1053@0.27.1920.1053" timestamp="1615780889593" />
     <state width="619" height="316" key="GridCell.Tab.0.right/1920.0.1920.1050/0.0.1920.1050@0.0.1920.1050" timestamp="1615523193350" />
     <state width="1877" height="541" key="GridCell.Tab.0.right/1920.0.1920.1050/0.0.1920.1050@1920.0.1920.1050" timestamp="1615586579780" />
     <state width="1877" height="541" key="GridCell.Tab.1.bottom" timestamp="1615586579781">
@@ -107,9 +170,10 @@
     </state>
     <state width="1877" height="541" key="GridCell.Tab.1.right/1920.0.1920.1050/0.0.1920.1050@0.0.1920.1050" timestamp="1615517666841" />
     <state width="1877" height="541" key="GridCell.Tab.1.right/1920.0.1920.1050/0.0.1920.1050@1920.0.1920.1050" timestamp="1615586579781" />
-    <state x="440" y="99" key="SettingsEditor" timestamp="1615522963408">
-      <screen x="0" y="0" width="1920" height="1050" />
+    <state x="440" y="126" width="1024" height="852" key="SettingsEditor" timestamp="1615778868661">
+      <screen x="0" y="27" width="1920" height="1053" />
     </state>
+    <state x="440" y="126" width="1024" height="852" key="SettingsEditor/0.27.1920.1053@0.27.1920.1053" timestamp="1615778868661" />
     <state x="440" y="99" key="SettingsEditor/1920.0.1920.1050/0.0.1920.1050@0.0.1920.1050" timestamp="1615522963408" />
     <state width="498" height="446" key="SwitcherDM" timestamp="1615523556864">
       <screen x="0" y="0" width="1920" height="1050" />

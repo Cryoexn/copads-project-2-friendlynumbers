@@ -116,7 +116,8 @@ public class FriendlySmp extends Task {
     } // end addEntryToMap.
 
     /**
-     *
+     * Finds Top friendly values for a given range of numbers from start to finish.
+     * Reduces the Map of friendly numbers with parallelization.
      *
      * @param start  int value to start range.
      * @param finish int value to finish range.
@@ -334,7 +335,7 @@ public class FriendlySmp extends Task {
     private ArrayList<Integer> getDivisors(int val) {
         ArrayList<Integer> divisors = new ArrayList<>();
 
-        for (int i=1; i<=Math.sqrt(val); i++)
+        for (int i=1; i <= Math.sqrt(val); i++)
         {
             if ((val % i) == 0)
             {

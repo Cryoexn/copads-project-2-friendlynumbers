@@ -9,6 +9,7 @@
 //
 //******************************************************************************
 
+import edu.rit.pj2.Loop;
 import edu.rit.pj2.Task;
 import java.util.*;
 
@@ -53,20 +54,54 @@ public class FriendlySeq extends Task {
     } // end main.
 
     /**
+     * Finds Top friendly values for a given range of numbers from start to finish.
      *
-     *
-     * @param start
-     * @param finish
+     * @param start  value to start range.
+     * @param finish value to finish range.
      */
     private void friendly(int start, int finish) {
 
+        Map<int[], int[]> abundancesMap = initAbundances(start, finish);
+
+        Map<String, int[]> friendlyMap = new LinkedHashMap<>();
+        for(Map.Entry<int[], int[]> pair : abundancesMap.entrySet()) {
+            if(friendlyMap.containsKey(Arrays.toString(pair.getKey()))) {
+                friendlyMap.put(Arrays.toString(pair.getKey()), concatArrays(friendlyMap.get(Arrays.toString(pair.getKey())), pair.getValue()));
+            } else {
+                friendlyMap.put(Arrays.toString(pair.getKey()), pair.getValue());
+            }
+        }
+
+        ArrayList<Map.Entry<String, int[]>> greatest = getTopFriendlyEntries(friendlyMap);
+        int count = countFriendly(friendlyMap);
+
+        System.out.print(prettify(greatest));
+        System.out.println(count + " friendly numbers.");
+
+    } // end friendly.
+
+    /**
+     * Creates a map of all abundances between start and finish values.
+     *
+     * @param start  int value to start range.
+     * @param finish int value to finish range.
+     *
+     * @return - LinkedHashMap of abundances.
+     */
+    private Map<int[], int[]> initAbundances(int start, int finish) {
+
+        // Map to store key - (numerator, denominator), value - (value).
+        Map<int [], int []> abundancesMap = new LinkedHashMap<>();
+
+        // Create array that contains the range of numbers
+        // from start to finish.
         int[] values = new int[(finish - start) + 1];
 
+        // Fill array with values between start and finish.
         for(int i = 0; i + start < finish + 1; i++) {
             values[i] = start + i;
         }
 
-        Map<int[], int[]> abundancesMap = new LinkedHashMap<>();
         ArrayList<Integer> divs;
 
         for (int val : values) {
@@ -81,37 +116,34 @@ public class FriendlySeq extends Task {
             arr[1] = val/gcd;
 
             abundancesMap.put(arr, new int[] {val});
-
         }
 
-        Map<String, int[]> friendlyMap = new LinkedHashMap<>();
-        for(Map.Entry<int[], int[]> pair : abundancesMap.entrySet()) {
-            if(friendlyMap.containsKey(Arrays.toString(pair.getKey()))) {
-                friendlyMap.put(Arrays.toString(pair.getKey()), concatArrays(friendlyMap.get(Arrays.toString(pair.getKey())), pair.getValue()));
-            } else {
-                friendlyMap.put(Arrays.toString(pair.getKey()), pair.getValue());
-            }
-        }
+        return abundancesMap;
 
-        ArrayList<Map.Entry<String, int[]>> greatest = getTopFriendlyEntries(friendlyMap);
-        int count = countFriendlyNums(friendlyMap);
+    } // end initAbundances.
 
-        System.out.print(prettify(greatest));
-        System.out.println(count + " friendly numbers.");
-
-    } // end friendly.
-
-    private ArrayList<Map.Entry<String, int[]>> getTopFriendlyEntries(Map<String, int[]> map){
+    /**
+     * Find the longest list of values in the map and create
+     * a list of all entries with this length of value array.
+     *
+     * @param map Map to get top entries from.
+     *
+     * @return Sorted list of top entries.
+     */
+    private ArrayList<Map.Entry<String,int[]>> getTopFriendlyEntries(Map<String, int[]> map) {
 
         ArrayList<Map.Entry<String, int[]>> greatest = new ArrayList<>();
         int most = 0;
 
         for(Map.Entry<String, int[]> pair : map.entrySet()) {
+
+            // If a new most is found, change the current most, and clear current list.
             if(pair.getValue().length > most) {
                 most = pair.getValue().length;
                 greatest.clear();
             }
 
+            // If the value length is the same as the most add it to list.
             if(pair.getValue().length == most && most != 1) {
                 greatest.add(pair);
             }
@@ -120,18 +152,34 @@ public class FriendlySeq extends Task {
         sortFriendly(greatest);
 
         return greatest;
-    }
 
+    } // end getTopFriendlyEntries.
+
+    /**
+     * Concatenate a2 to a1.
+     *
+     * @param a1 First array.
+     * @param a2 Second array.
+     *
+     * @return Concatenation of a1 and a2.
+     */
     private int[] concatArrays(int[] a1, int[] a2) {
+
         int [] val = new int[((int[])a1).length + ((int[])a2).length];
 
         System.arraycopy(a1, 0, val, 0, a1.length);
         System.arraycopy(a2, 0, val, a1.length, a2.length);
 
         return val;
-    }
 
+    } // end concatArrays.
 
+    /**
+     * Sorts the friendly list value arrays in increasing order.
+     * Sorts the friendly list based on the numerator denominator key.
+     *
+     * @param friendly List to sort based on the Map.Entry key - (numerator/denominator).
+     */
     private void sortFriendly(ArrayList<Map.Entry<String, int[]>> friendly) {
 
         for(Map.Entry<String, int[]> e : friendly) {
@@ -145,56 +193,100 @@ public class FriendlySeq extends Task {
             String[] vals1 = key1.split(",");
             String[] vals2 = key2.split(",");
 
-            return Double.compare(Double.parseDouble(vals1[0].strip()) / Double.parseDouble(vals1[1].strip()), Double.parseDouble(vals2[0].strip()) / Double.parseDouble(vals2[1].strip()));
+            return  Double.compare(Double.parseDouble(vals1[0].strip()) / Double.parseDouble(vals1[1].strip()),
+                    Double.parseDouble(vals2[0].strip()) / Double.parseDouble(vals2[1].strip()));
         });
-    }
 
-    private int countFriendlyNums(Map<String, int[]> nums) {
+    } // end sortFriendly.
+
+    /**
+     * Counts the total number of friendly numbers in a Map.
+     *
+     * @param numbers Map of friendly numbers.
+     *
+     * @return Total count of each entry value length.
+     */
+    private int countFriendly(Map<String, int[]> numbers) {
+
         int count = 0;
 
-        for(Map.Entry<String, int[]> e : nums.entrySet()) {
+        for(Map.Entry<String, int[]> e : numbers.entrySet()) {
             if(e.getValue().length >= 2) {
                 count += e.getValue().length;
             }
         }
 
         return count;
-    }
 
+    } // end countFriendly.
+
+    /**
+     * Get the greatest common divisor of num1 and num2.
+     *
+     * @param num1 first number.
+     * @param num2 second number.
+     *
+     * @return Greatest common divisor of num1 and num2.
+     */
     private int gcd(int num1, int num2) {
+
         if (num2 == 0)
             return num1;
         else
-            return gcd(num2, num1%num2);
-    }
+            return gcd(num2, (num1 % num2));
 
-    private int sum(ArrayList<Integer> nums) {
-        return nums.stream().mapToInt(Integer::intValue).sum();
-    }
+    } // end gcd.
 
+    /**
+     * Calculates the sum of all values in list.
+     *
+     * @param numbers List of numbers to add together.
+     *
+     * @return Total of all values in numbers.
+     */
+    private int sum(ArrayList<Integer> numbers) {
+
+        return numbers.stream().mapToInt(Integer::intValue).sum();
+
+    } // end sum.
+
+    /**
+     * Get sorted list of divisors for an int value.
+     *
+     * @param val Integer to get list of divisors for.
+     *
+     * @return Sorted list of divisors for val.
+     */
     private ArrayList<Integer> getDivisors(int val) {
         ArrayList<Integer> divisors = new ArrayList<>();
 
-            for (int i=1; i<=Math.sqrt(val); i++)
+        for (int i=1; i<=Math.sqrt(val); i++)
+        {
+            if ((val % i) == 0)
             {
-                if (val%i==0)
-                {
-                    // If divisors are equal, print only one
-                    if (val/i == i) {
-                        divisors.add(i);
-
-                    } else { // Otherwise print both
-                        divisors.add(i);
-                        divisors.add(val / i);
-                    }
+                // If divisors are equal
+                if ((val / i) == i) {
+                    divisors.add(i);
+                } else { // Otherwise
+                    divisors.add(i);
+                    divisors.add(val / i);
                 }
             }
+        }
 
         divisors.sort(null);
 
         return divisors;
-    }
 
+    } // end getDivisors.
+
+    /**
+     * Formats a list of friendly number entries to acceptable String for display.
+     *
+     * @param entries Top entries of friendly numbers to format.
+     *
+     * @return formatted String of entries.
+     */
     private String prettify(ArrayList<Map.Entry<String, int[]>> entries) {
         StringBuilder string = new StringBuilder();
 
@@ -206,15 +298,17 @@ public class FriendlySeq extends Task {
             e = itr.next();
             string.append("{(");
             assert e != null;
-                String[] vals = e.getKey().replace("[", "").replace("]", "").split(",");
-            string.append(vals[0]);
+            String[] values = e.getKey().replace("[", "").replace("]", "").split(",");
+            string.append(values[0]);
             string.append("/");
-            string.append(vals[1].strip());
+            string.append(values[1].strip());
             string.append("): ");
             string.append(Arrays.toString(e.getValue()));
             string.append("}\n");
         }
 
         return string.toString();
-    }
-}
+
+    } // end prettify.
+
+} // end FriendlySeq.

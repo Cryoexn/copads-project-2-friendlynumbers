@@ -12,6 +12,8 @@
 
 import edu.rit.pj2.Loop;
 import edu.rit.pj2.Task;
+
+import java.lang.reflect.Array;
 import java.util.*;
 
 /**
@@ -33,16 +35,17 @@ public class FriendlySmp extends Task {
         }
     }
 
-    private void friendly(int start, int finish) {
-
+    private Map<int[], int[]> initAbundances(int start, int finish) {
         int[] values = new int[(finish - start) + 1];
 
         for(int i = 0; i + start < finish + 1; i++) {
             values[i] = start + i;
         }
 
-        Map<int[], int[]> abundancesList = new LinkedHashMap<>();
+        Map<int [], int []> abundancesList = new LinkedHashMap<>();
         ArrayList<Integer> divs;
+
+        // Attempt to make parallel start.
 
         for (int val : values) {
             divs = getDivisors(val);
@@ -58,39 +61,66 @@ public class FriendlySmp extends Task {
             abundancesList.put(arr, new int[] {val});
         }
 
-        // ********************************************** Parallelize **********************************************
+        // Attempt to make parallel end.
 
-        Map<String, int[]> friendlyList = new LinkedHashMap<>();
+        return abundancesList;
+    }
 
+    private void friendly(int start, int finish) {
+
+        Map<int[], int[]> abundancesList = initAbundances(start, finish);
+
+        // ************************* Parallel *************************
+
+        //Make accumulation variable.
+        Map<String, int[]> friendlyMap = new LinkedHashMap<>();
+
+        // Get lists of keys and values.
         ArrayList<int[]> keyList = new ArrayList<>(abundancesList.keySet());
         ArrayList<int[]> valueList = new ArrayList<>(abundancesList.values());
 
         parallelFor(0, abundancesList.size() - 1).exec(new Loop(){
-
             @Override
             public void run(int i) throws Exception {
-
-                if(friendlyList.containsKey(Arrays.toString(keyList.get(i)))) {
-                    friendlyList.put(Arrays.toString(keyList.get(i)), concatArrays(friendlyList.get(Arrays.toString(keyList.get(i))), valueList.get(i)));
+                if(mapContainsKey(friendlyMap, keyList.get(i))) {
+                    addExistingMapEntry(friendlyMap, keyList.get(i), valueList.get(i));
                 } else {
-                    friendlyList.put(Arrays.toString(keyList.get(i)), valueList.get(i));
+                    addNewMapEntry(friendlyMap, keyList.get(i), valueList.get(i));
                 }
             }
         });
 
-        ArrayList<Map.Entry<String, int[]>> greatest = new ArrayList<>();
-        int count = countFriendlyNums(friendlyList);
-        int most = 0;
+        // ************************* Parallel *************************
 
-                for(Map.Entry<String, int[]> pair : friendlyList.entrySet()) {
-        if(pair.getValue().length > most) {
-            most = pair.getValue().length;
-        }
+        ArrayList<Map.Entry<String, int[]>> topFriendlyEntries = getTopFriendlyEntries(friendlyMap);
+
+        System.out.print(prettify(topFriendlyEntries));
+        System.out.println(countFriendly(friendlyMap) + " friendly numbers.");
     }
 
-        // ********************************************** Parallelize **********************************************
+    private synchronized void addExistingMapEntry(Map<String, int[]> map, int[] key, int[] value) {
+        map.put(Arrays.toString(key), concatArrays(map.get(Arrays.toString(key)), value));
+    }
 
-        for(Map.Entry<String, int[]> pair : friendlyList.entrySet()) {
+    private synchronized void addNewMapEntry(Map<String, int[]> map, int[] key, int[] value) {
+        map.put(Arrays.toString(key),value);
+    }
+
+    private synchronized boolean mapContainsKey(Map<String, int[]> map, int[] key) {
+        return map.containsKey(Arrays.toString(key));
+    }
+
+    private ArrayList<Map.Entry<String,int[]>> getTopFriendlyEntries(Map<String, int[]> map) {
+        ArrayList<Map.Entry<String, int[]>> greatest = new ArrayList<>();
+        int most = 0;
+
+        for(Map.Entry<String, int[]> pair : map.entrySet()) {
+            if(pair.getValue().length > most) {
+                most = pair.getValue().length;
+            }
+        }
+
+        for(Map.Entry<String, int[]> pair : map.entrySet()) {
             if(pair.getValue().length == most && most != 1) {
                 greatest.add(pair);
             }
@@ -98,8 +128,16 @@ public class FriendlySmp extends Task {
 
         sortFriendly(greatest);
 
-        System.out.print(prettify(greatest));
-        System.out.println(count + " friendly numbers.");
+        return greatest;
+    }
+
+    private int[] concatArrays(int[] a1, int[] a2) {
+        int [] val = new int[((int[])a1).length + ((int[])a2).length];
+
+        System.arraycopy(a1, 0, val, 0, a1.length);
+        System.arraycopy(a2, 0, val, a1.length, a2.length);
+
+        return val;
     }
 
     private void sortFriendly(ArrayList<Map.Entry<String, int[]>> friendly) {
@@ -119,7 +157,7 @@ public class FriendlySmp extends Task {
         });
     }
 
-    private int countFriendlyNums(Map<String, int[]> nums) {
+    private int countFriendly(Map<String, int[]> nums) {
         int count = 0;
 
         for(Map.Entry<String, int[]> e : nums.entrySet()) {
@@ -136,15 +174,6 @@ public class FriendlySmp extends Task {
             return num1;
         else
             return gcd(num2, num1%num2);
-    }
-
-    private int[] concatArrays(int[] a1, int[] a2) {
-        int [] val = new int[a1.length + a2.length];
-
-        System.arraycopy(a1, 0, val, 0, a1.length);
-        System.arraycopy(a2, 0, val, a1.length, a2.length);
-
-        return val;
     }
 
     private int sum(ArrayList<Integer> nums) {

@@ -87,6 +87,16 @@ public class FriendlySeq extends Task {
         System.out.println(count + " friendly numbers.");
     }
 
+    private int[] concatArrays(int[] a1, int[] a2) {
+        int [] val = new int[((int[])a1).length + ((int[])a2).length];
+
+        System.arraycopy(a1, 0, val, 0, a1.length);
+        System.arraycopy(a2, 0, val, a1.length, a2.length);
+
+        return val;
+    }
+
+
     private void sortFriendly(ArrayList<Map.Entry<String, int[]>> friendly) {
 
         for(Map.Entry<String, int[]> e : friendly) {
@@ -121,15 +131,6 @@ public class FriendlySeq extends Task {
             return num1;
         else
             return gcd(num2, num1%num2);
-    }
-
-    private int[] concatArrays(int[] a1, int[] a2) {
-        int [] val = new int[a1.length + a2.length];
-
-        System.arraycopy(a1, 0, val, 0, a1.length);
-        System.arraycopy(a2, 0, val, a1.length, a2.length);
-
-        return val;
     }
 
     private int sum(ArrayList<Integer> nums) {

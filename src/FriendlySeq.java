@@ -5,7 +5,7 @@
 // Author     : David Pitoniak dhp6797@rit.edu
 // Date       : 03/11/2021
 //
-// Description:
+// Description: Sequential Version of Friendly.
 //
 //******************************************************************************
 
@@ -23,14 +23,41 @@ import java.util.*;
  */
 public class FriendlySeq extends Task {
 
+    /**
+     * Takes a start and finish value from command line arguments
+     * and prints the top friendly number entries and the number
+     * of friendly numbers.
+     *
+     * @param args - start and finish values from commandline.
+     */
     public void main(String[]args) {
-        if(args.length != 2) {
-            System.out.println("Usage: java pj2 FriendlySeq start-integer end-integer # 0 < start < end");
-        } else {
-            friendly(Integer.parseInt(args[0]), Integer.parseInt(args[1]));
-        }
-    }
 
+        if(args.length != 2) {
+            System.err.println("Usage: java pj2 FriendlySeq start-integer end-integer # 0 < start < end");
+        } else {
+
+            try {
+
+                // Make sure arguments are legal Integers.
+                int start  = Integer.parseInt(args[0]);
+                int finish = Integer.parseInt(args[1]);
+
+                // Display the top friendly numbers for range start - finish.
+                friendly(start, finish);
+
+            } catch (NumberFormatException ex) {
+                System.err.println("Usage: java pj2 FriendlySeq start-integer end-integer # 0 < start < end");
+            }
+        }
+
+    } // end main.
+
+    /**
+     *
+     *
+     * @param start
+     * @param finish
+     */
     private void friendly(int start, int finish) {
 
         int[] values = new int[(finish - start) + 1];
@@ -39,7 +66,7 @@ public class FriendlySeq extends Task {
             values[i] = start + i;
         }
 
-        Map<int[], int[]> abundancesList = new LinkedHashMap<>();
+        Map<int[], int[]> abundancesMap = new LinkedHashMap<>();
         ArrayList<Integer> divs;
 
         for (int val : values) {
@@ -53,29 +80,38 @@ public class FriendlySeq extends Task {
             arr[0] = sum/gcd;
             arr[1] = val/gcd;
 
-            abundancesList.put(arr, new int[] {val});
+            abundancesMap.put(arr, new int[] {val});
+
         }
 
-        Map<String, int[]> friendlyList = new LinkedHashMap<>();
-        for(Map.Entry<int[], int[]> pair : abundancesList.entrySet()) {
-            if(friendlyList.containsKey(Arrays.toString(pair.getKey()))) {
-                friendlyList.put(Arrays.toString(pair.getKey()), concatArrays(friendlyList.get(Arrays.toString(pair.getKey())), pair.getValue()));
+        Map<String, int[]> friendlyMap = new LinkedHashMap<>();
+        for(Map.Entry<int[], int[]> pair : abundancesMap.entrySet()) {
+            if(friendlyMap.containsKey(Arrays.toString(pair.getKey()))) {
+                friendlyMap.put(Arrays.toString(pair.getKey()), concatArrays(friendlyMap.get(Arrays.toString(pair.getKey())), pair.getValue()));
             } else {
-                friendlyList.put(Arrays.toString(pair.getKey()), pair.getValue());
+                friendlyMap.put(Arrays.toString(pair.getKey()), pair.getValue());
             }
         }
+
+        ArrayList<Map.Entry<String, int[]>> greatest = getTopFriendlyEntries(friendlyMap);
+        int count = countFriendlyNums(friendlyMap);
+
+        System.out.print(prettify(greatest));
+        System.out.println(count + " friendly numbers.");
+
+    } // end friendly.
+
+    private ArrayList<Map.Entry<String, int[]>> getTopFriendlyEntries(Map<String, int[]> map){
 
         ArrayList<Map.Entry<String, int[]>> greatest = new ArrayList<>();
-        int count = countFriendlyNums(friendlyList);
         int most = 0;
 
-        for(Map.Entry<String, int[]> pair : friendlyList.entrySet()) {
+        for(Map.Entry<String, int[]> pair : map.entrySet()) {
             if(pair.getValue().length > most) {
                 most = pair.getValue().length;
+                greatest.clear();
             }
-        }
 
-        for(Map.Entry<String, int[]> pair : friendlyList.entrySet()) {
             if(pair.getValue().length == most && most != 1) {
                 greatest.add(pair);
             }
@@ -83,8 +119,7 @@ public class FriendlySeq extends Task {
 
         sortFriendly(greatest);
 
-        System.out.print(prettify(greatest));
-        System.out.println(count + " friendly numbers.");
+        return greatest;
     }
 
     private int[] concatArrays(int[] a1, int[] a2) {

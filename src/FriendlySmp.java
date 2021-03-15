@@ -6,7 +6,7 @@
 // Author     : David Pitoniak dhp6797@rit.edu
 // Date       : 03/11/2021
 //
-// Description:
+// Description: Symmetric Multiprocessing Version of Friendly.
 //
 //******************************************************************************
 
@@ -27,21 +27,37 @@ import java.util.*;
 public class FriendlySmp extends Task {
 
     /**
+     * Takes a start and finish value from command line arguments
+     * and prints the top friendly number entries and the number
+     * of friendly numbers.
      *
      * @param args - start and finish values from commandline.
      */
     public void main(String[]args) {
 
         if(args.length != 2) {
-            System.out.println("Usage: java pj2 FriendlySmp start-integer end-integer # 0 < start < end");
+            System.err.println("Usage: java pj2 FriendlySmp start-integer end-integer # 0 < start < end");
         } else {
-            friendly(Integer.parseInt(args[0]), Integer.parseInt(args[1]));
+
+            try {
+
+                // Make sure arguments are legal Integers.
+                int start  = Integer.parseInt(args[0]);
+                int finish = Integer.parseInt(args[1]);
+
+                // Display the top friendly numbers for range start - finish.
+                friendly(start, finish);
+
+            } catch (NumberFormatException ex) {
+                System.err.println();
+            }
         }
 
     } // end main.
 
     /**
-     *
+     * Creates a map of all abundances between start and finish values.
+     * Uses parallelization for distributing computation for multiple cores.
      *
      * @param start  int value to start range.
      * @param finish int value to finish range.
@@ -86,14 +102,15 @@ public class FriendlySmp extends Task {
     } // end initAbundances.
 
     /**
+     * Thread safe method to add a new entry to abundances Map.
      *
-     *
-     * @param map
-     * @param key
-     * @param values
+     * @param map    Map to add key value pair to.
+     * @param key    Key at which to put value.
+     * @param values Value to put at key.
      */
     private synchronized void addEntryToMap(Map<int[], int[]> map, int[] key, int[] values) {
 
+        // Add key value pair into map.
         map.put(key, values);
 
     } // end addEntryToMap.
@@ -101,23 +118,23 @@ public class FriendlySmp extends Task {
     /**
      *
      *
-     * @param start
-     * @param finish
+     * @param start  int value to start range.
+     * @param finish int value to finish range.
      */
     private void friendly(int start, int finish) {
 
-        Map<int[], int[]> abundancesList = initAbundances(start, finish);
+        // Initial Map of values from start to finish.
+        Map<int[], int[]> abundancesMap = initAbundances(start, finish);
 
-        // ************************* Parallel *************************
-
-        //Make accumulation variable.
+        // Make accumulation variable for Map reduction.
         Map<String, int[]> friendlyMap = new LinkedHashMap<>();
 
-        // Get lists of keys and values.
-        ArrayList<int[]> keyList = new ArrayList<>(abundancesList.keySet());
-        ArrayList<int[]> valueList = new ArrayList<>(abundancesList.values());
+        // Get lists of keys and values from non reduced Map.
+        ArrayList<int[]> keyList = new ArrayList<>(abundancesMap.keySet());
+        ArrayList<int[]> valueList = new ArrayList<>(abundancesMap.values());
 
-        parallelFor(0, abundancesList.size() - 1).exec(new Loop(){
+        // Parallelization for Map Reduction.
+        parallelFor(0, abundancesMap.size() - 1).exec(new Loop(){
             @Override
             public void run(int i) throws Exception {
                 if(mapContainsKey(friendlyMap, keyList.get(i))) {
@@ -128,30 +145,31 @@ public class FriendlySmp extends Task {
             }
         });
 
-        // ************************* Parallel *************************
-
+        // List of entries that have the greatest number of values in value array.
         ArrayList<Map.Entry<String, int[]>> topFriendlyEntries = getTopFriendlyEntries(friendlyMap);
 
+        // Display top entries and total number of friendly numbers.
         System.out.print(prettify(topFriendlyEntries));
         System.out.println(countFriendly(friendlyMap) + " friendly numbers.");
 
     } // end friendly.
 
     /**
+     * Thread safe method to add an existing entry to abundances Map during parallel Map Reduction.
      *
-     *
-     * @param map
-     * @param key
-     * @param value
+     * @param map   Map to add key value pair to
+     * @param key   Key to put value at in list.
+     * @param value Value to put at key in map.
      */
     private synchronized void addExistingMapEntry(Map<String, int[]> map, int[] key, int[] value) {
 
+        // Insert the value array concatenated to existing value in map.
         map.put(Arrays.toString(key), concatArrays(map.get(Arrays.toString(key)), value));
 
     } // end addExistingMapEntry.
 
     /**
-     *
+     * Concatenate a2 to a1.
      *
      * @param a1 First array.
      * @param a2 Second array.
@@ -170,7 +188,7 @@ public class FriendlySmp extends Task {
     } // end concatArrays.
 
     /**
-     *
+     * Thread safe method to add a new entry to abundances Map during parallel Map Reduction.
      *
      * @param map   Map to add new entry to.
      * @param key   Key at which to put value.
@@ -183,7 +201,7 @@ public class FriendlySmp extends Task {
     } // end addNewMapEntry.
 
     /**
-     *
+     * Thread safe method to check if map contains a key during parallelization.
      *
      * @param map Map to check for key.
      * @param key Key to check for in map.
@@ -192,28 +210,33 @@ public class FriendlySmp extends Task {
      */
     private synchronized boolean mapContainsKey(Map<String, int[]> map, int[] key) {
 
+        // If the key is in map.
         return map.containsKey(Arrays.toString(key));
 
     } // end mapContainsKey.
 
     /**
-     *
+     * Find the longest list of values in the map and create
+     * a list of all entries with this length of value array.
      *
      * @param map Map to get top entries from.
      *
      * @return Sorted list of top entries.
      */
     private ArrayList<Map.Entry<String,int[]>> getTopFriendlyEntries(Map<String, int[]> map) {
+
         ArrayList<Map.Entry<String, int[]>> greatest = new ArrayList<>();
         int most = 0;
 
         for(Map.Entry<String, int[]> pair : map.entrySet()) {
+
+            // If a new most is found, change the current most, and clear current list.
             if(pair.getValue().length > most) {
                 most = pair.getValue().length;
+                greatest.clear();
             }
-        }
 
-        for(Map.Entry<String, int[]> pair : map.entrySet()) {
+            // If the value length is the same as the most add it to list.
             if(pair.getValue().length == most && most != 1) {
                 greatest.add(pair);
             }
@@ -226,7 +249,8 @@ public class FriendlySmp extends Task {
     } // end getTopFriendlyEntries.
 
     /**
-     *
+     * Sorts the friendly list value arrays in increasing order.
+     * Sorts the friendly list based on the numerator denominator key.
      *
      * @param friendly List to sort based on the Map.Entry key - (numerator/denominator).
      */
@@ -243,17 +267,18 @@ public class FriendlySmp extends Task {
             String[] vals1 = key1.split(",");
             String[] vals2 = key2.split(",");
 
-            return Double.compare(Double.parseDouble(vals1[0].strip()) / Double.parseDouble(vals1[1].strip()), Double.parseDouble(vals2[0].strip()) / Double.parseDouble(vals2[1].strip()));
+            return  Double.compare(Double.parseDouble(vals1[0].strip()) / Double.parseDouble(vals1[1].strip()),
+                    Double.parseDouble(vals2[0].strip()) / Double.parseDouble(vals2[1].strip()));
         });
 
     } // end sortFriendly.
 
     /**
-     *
+     * Counts the total number of friendly numbers in a Map.
      *
      * @param numbers Map of friendly numbers.
      *
-     * @return Count of each entry value length.
+     * @return Total count of each entry value length.
      */
     private int countFriendly(Map<String, int[]> numbers) {
 
@@ -270,12 +295,12 @@ public class FriendlySmp extends Task {
     } // end countFriendly.
 
     /**
-     *
+     * Get the greatest common divisor of num1 and num2.
      *
      * @param num1 first number.
      * @param num2 second number.
      *
-     * @return Greatest common divisor of num1.
+     * @return Greatest common divisor of num1 and num2.
      */
     private int gcd(int num1, int num2) {
 
@@ -287,7 +312,7 @@ public class FriendlySmp extends Task {
     } // end gcd.
 
     /**
-     *
+     * Calculates the sum of all values in list.
      *
      * @param numbers List of numbers to add together.
      *
@@ -300,7 +325,7 @@ public class FriendlySmp extends Task {
     } // end sum.
 
     /**
-     *
+     * Get sorted list of divisors for an int value.
      *
      * @param val Integer to get list of divisors for.
      *
@@ -330,11 +355,11 @@ public class FriendlySmp extends Task {
     } // end getDivisors.
 
     /**
+     * Formats a list of friendly number entries to acceptable String for display.
      *
+     * @param entries Top entries of friendly numbers to format.
      *
-     * @param entries
-     *
-     * @return
+     * @return formatted String of entries.
      */
     private String prettify(ArrayList<Map.Entry<String, int[]>> entries) {
         StringBuilder string = new StringBuilder();
@@ -347,15 +372,17 @@ public class FriendlySmp extends Task {
             e = itr.next();
             string.append("{(");
             assert e != null;
-            String[] vals = e.getKey().replace("[", "").replace("]", "").split(",");
-            string.append(vals[0]);
+            String[] values = e.getKey().replace("[", "").replace("]", "").split(",");
+            string.append(values[0]);
             string.append("/");
-            string.append(vals[1].strip());
+            string.append(values[1].strip());
             string.append("): ");
             string.append(Arrays.toString(e.getValue()));
             string.append("}\n");
         }
 
         return string.toString();
-    }
-}
+
+    } // end prettify.
+
+} // end FriendlySeq.

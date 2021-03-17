@@ -79,7 +79,7 @@ public class FriendlySmp extends Task {
         }
 
         // Parallelization of initializing abundancesMap.
-        parallelFor(1,  finish - 1).exec( new Loop() {
+        parallelFor(0,  values.length - 1).exec( new Loop() {
             ArrayList<Integer> divs = new ArrayList<>();
 
             @Override

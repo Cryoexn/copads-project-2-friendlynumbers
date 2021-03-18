@@ -9,7 +9,6 @@
 //
 //******************************************************************************
 
-import edu.rit.pj2.Loop;
 import edu.rit.pj2.Task;
 import java.util.*;
 
@@ -39,7 +38,7 @@ public class FriendlySeq extends Task {
 
             try {
 
-                // Make sure arguments are legal Integers.
+                // Make sure range arguments are legal Integers.
                 int start  = Integer.parseInt(args[0]);
                 int finish = Integer.parseInt(args[1]);
 
@@ -61,9 +60,13 @@ public class FriendlySeq extends Task {
      */
     private void friendly(int start, int finish) {
 
+        // Map to store friendly numbers before map reduce.
         Map<int[], int[]> abundancesMap = initAbundances(start, finish);
 
+        // Map to store reduced abundancesMap.
         Map<String, int[]> friendlyMap = new LinkedHashMap<>();
+
+        // Reduce abundancesMap.
         for(Map.Entry<int[], int[]> pair : abundancesMap.entrySet()) {
             if(friendlyMap.containsKey(Arrays.toString(pair.getKey()))) {
                 friendlyMap.put(Arrays.toString(pair.getKey()), concatArrays(friendlyMap.get(Arrays.toString(pair.getKey())), pair.getValue()));
@@ -72,11 +75,12 @@ public class FriendlySeq extends Task {
             }
         }
 
+        // Get the keys with the largest number of elements in its value array.
         ArrayList<Map.Entry<String, int[]>> greatest = getTopFriendlyEntries(friendlyMap);
-        int count = countFriendly(friendlyMap);
 
+        // Display the top results and the number of friendly numbers.
         System.out.print(prettify(greatest));
-        System.out.println(count + " friendly numbers.");
+        System.out.println(countFriendly(friendlyMap) + " friendly numbers.");
 
     } // end friendly.
 
@@ -95,27 +99,28 @@ public class FriendlySeq extends Task {
 
         // Create array that contains the range of numbers
         // from start to finish.
-        int[] values = new int[(finish - start) + 1];
+        int[] values = new int[finish - start];
 
         // Fill array with values between start and finish.
-        for(int i = 0; i + start < finish + 1; i++) {
+        for(int i = 0; i + start < finish; i++) {
             values[i] = start + i;
         }
 
-        ArrayList<Integer> divs;
-
         for (int val : values) {
-            divs = getDivisors(val);
 
-            int [] arr = new int[2];
+            // List of divisors for val.
+            ArrayList<Integer> divs = getDivisors(val);
+
+            // Array to hold ratio.
+            int [] ratio = new int[2];
 
             int sum = sum(divs);
             int gcd = gcd(sum, val);
 
-            arr[0] = sum/gcd;
-            arr[1] = val/gcd;
+            ratio[0] = sum/gcd;
+            ratio[1] = val/gcd;
 
-            abundancesMap.put(arr, new int[] {val});
+            abundancesMap.put(ratio, new int[] {val});
         }
 
         return abundancesMap;
@@ -132,7 +137,10 @@ public class FriendlySeq extends Task {
      */
     private ArrayList<Map.Entry<String,int[]>> getTopFriendlyEntries(Map<String, int[]> map) {
 
+        // List for the top entries in map.
         ArrayList<Map.Entry<String, int[]>> greatest = new ArrayList<>();
+
+        // Current most values in array.
         int most = 0;
 
         for(Map.Entry<String, int[]> pair : map.entrySet()) {
@@ -165,7 +173,8 @@ public class FriendlySeq extends Task {
      */
     private int[] concatArrays(int[] a1, int[] a2) {
 
-        int [] val = new int[((int[])a1).length + ((int[])a2).length];
+        // new array large enough to store values from a1 and a2.
+        int [] val = new int[(a1).length + (a2).length];
 
         System.arraycopy(a1, 0, val, 0, a1.length);
         System.arraycopy(a2, 0, val, a1.length, a2.length);
@@ -208,10 +217,11 @@ public class FriendlySeq extends Task {
      */
     private int countFriendly(Map<String, int[]> numbers) {
 
+        // Number of friendly numbers.
         int count = 0;
 
         for(Map.Entry<String, int[]> e : numbers.entrySet()) {
-            if(e.getValue().length >= 2) {
+            if(e.getValue().length > 1) {
                 count += e.getValue().length;
             }
         }
@@ -258,6 +268,8 @@ public class FriendlySeq extends Task {
      * @return Sorted list of divisors for val.
      */
     private ArrayList<Integer> getDivisors(int val) {
+
+        // List of divisors.
         ArrayList<Integer> divisors = new ArrayList<>();
 
         for (int i=1; i<=Math.sqrt(val); i++)
@@ -288,9 +300,14 @@ public class FriendlySeq extends Task {
      * @return formatted String of entries.
      */
     private String prettify(ArrayList<Map.Entry<String, int[]>> entries) {
+
+        // String to represent entries.
         StringBuilder string = new StringBuilder();
 
+        // Iterator to iterate over entries.
         Iterator<Map.Entry<String, int[]>> itr = entries.iterator();
+
+        // Temporary Map entry to store iterations of entries.
         Map.Entry<String, int[]> e = null;
 
         while(itr.hasNext()) {

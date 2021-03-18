@@ -71,29 +71,32 @@ public class FriendlySmp extends Task {
 
         // Create array that contains the range of numbers
         // from start to finish.
-        int[] values = new int[(finish - start) + 1];
+        int[] values = new int[finish - start];
 
         // Fill array with values between start and finish.
-        for(int i = 0; i + start < finish + 1; i++) {
+        for(int i = 0; i + start < finish; i++) {
             values[i] = start + i;
         }
 
         // Parallelization of initializing abundancesMap.
         parallelFor(0,  values.length - 1).exec( new Loop() {
-            ArrayList<Integer> divs = new ArrayList<>();
 
             @Override
             public void run(int i) throws Exception {
-                divs = getDivisors(values[i]);
-                int [] arr = new int[2];
+
+                // List of divisors for values[i].
+                ArrayList<Integer> divs = getDivisors(values[i]);
+
+                // Array to hold ratio.
+                int [] ratio = new int[2];
 
                 int sum = sum(divs);
                 int gcd = gcd(sum, values[i]);
 
-                arr[0] = sum / gcd;
-                arr[1] = values[i] / gcd;
+                ratio[0] = sum / gcd;
+                ratio[1] = values[i] / gcd;
 
-                addEntryToMap(abundancesMap, arr, new int[] {values[i]});
+                addEntryToMap(abundancesMap, ratio, new int[] {values[i]});
             }
         });
 
@@ -179,6 +182,7 @@ public class FriendlySmp extends Task {
      */
     private int[] concatArrays(int[] a1, int[] a2) {
 
+        // new array large enough to store values from a1 and a2.
         int [] val = new int[((int[])a1).length + ((int[])a2).length];
 
         System.arraycopy(a1, 0, val, 0, a1.length);
@@ -226,7 +230,10 @@ public class FriendlySmp extends Task {
      */
     private ArrayList<Map.Entry<String,int[]>> getTopFriendlyEntries(Map<String, int[]> map) {
 
+        // List for the top entries in map.
         ArrayList<Map.Entry<String, int[]>> greatest = new ArrayList<>();
+
+        // Current most values in array.
         int most = 0;
 
         for(Map.Entry<String, int[]> pair : map.entrySet()) {
@@ -283,10 +290,11 @@ public class FriendlySmp extends Task {
      */
     private int countFriendly(Map<String, int[]> numbers) {
 
+        // Number of friendly numbers.
         int count = 0;
 
         for(Map.Entry<String, int[]> e : numbers.entrySet()) {
-            if(e.getValue().length >= 2) {
+            if(e.getValue().length > 1) {
                 count += e.getValue().length;
             }
         }
@@ -333,6 +341,8 @@ public class FriendlySmp extends Task {
      * @return Sorted list of divisors for val.
      */
     private ArrayList<Integer> getDivisors(int val) {
+
+        // List of divisors for val.
         ArrayList<Integer> divisors = new ArrayList<>();
 
         for (int i=1; i <= Math.sqrt(val); i++)
@@ -363,9 +373,14 @@ public class FriendlySmp extends Task {
      * @return formatted String of entries.
      */
     private String prettify(ArrayList<Map.Entry<String, int[]>> entries) {
+
+        // String to represent entries.
         StringBuilder string = new StringBuilder();
 
+        // Iterator to iterate over entries.
         Iterator<Map.Entry<String, int[]>> itr = entries.iterator();
+
+        // Temporary Map entry to store iterations of entries.
         Map.Entry<String, int[]> e = null;
 
         while(itr.hasNext()) {
